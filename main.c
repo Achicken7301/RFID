@@ -2,28 +2,13 @@
 
 void TIM2_INT_Init(void);
 
-int timer_counter = 0;
-int timer_flag = 0;
-
-void setTimer(int dur){
-	timer_flag = 0;
-	timer_counter = dur;	
-}
-
 void TIM2_IRQHandler()
 {
 	// Checks whether the TIM2 interrupt has occurred or not
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update))
 	{
-		// Toggle LED on PB12
-		// GPIOC->ODR ^= GPIO_Pin_13;
-
-		if(timer_counter > 0){
-			timer_counter--;
-			if(timer_counter <= 0){
-				timer_flag = 1;
-			}
-		}
+		timerRun();
+		SCH_Update();
 
 		// Clears the TIM2 interrupt pending bit
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
@@ -32,6 +17,12 @@ void TIM2_IRQHandler()
 
 GPIO_InitTypeDef GPIO_InitStruct;
 
+// Example task
+void blinkLED_task(){
+	static int led_task_state = 0;
+	(led_task_state == 0) ? GPIO_SetBits(GPIOC, GPIO_Pin_13) : GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+	led_task_state^=1;
+}
 
 int state = 0;
 
@@ -55,14 +46,16 @@ int main(void)
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStruct);
 	
-
 	
-	setTimer(50);
+	
+	setTimer(500);
 	GPIO_SetBits(GPIOC, GPIO_Pin_14);
+	
+	SCH_Add_Task(blinkLED_task, 500, 200);
 	while(1)
 	{
 		if(timer_flag == 1){
-			setTimer(50);
+			setTimer(1000);
 			if(state == 0){
 				GPIO_SetBits(GPIOC, GPIO_Pin_14);
 			}else{
@@ -70,6 +63,8 @@ int main(void)
 			}
 			state=!state;
 		}
+		
+		SCH_Dispatch();
 	}
 }
 
@@ -90,7 +85,7 @@ void TIM2_INT_Init()
 	
 	// TIM2 initialization for overflow every 500ms
 	// Update Event (Hz) = timer_clock / ((TIM_Prescaler + 1) * (TIM_Period + 1))
-	// Update Event (Hz) = 72MHz / ((3599 + 1) * (9999 + 1)) = 2Hz (0.5s)
+	// Update Event (Hz) = 72MHz / ((7200 - 1) * (100 - 1)) = 100Hz (10ms)
 	TIM_TimeBaseInitStruct.TIM_Prescaler = 7200 - 1;
 	TIM_TimeBaseInitStruct.TIM_Period = 100 - 1;
 	

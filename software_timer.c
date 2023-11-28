@@ -14,6 +14,6 @@ void timerRun(){
 }
 
 void setTimer(int duration){
-	timer_counter = duration;
+	timer_counter = duration/CLOCK_TICK;
 	timer_flag = 0;
 }

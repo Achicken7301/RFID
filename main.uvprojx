@@ -394,6 +394,16 @@
               <FileType>1</FileType>
               <FilePath>.\delay.c</FilePath>
             </File>
+            <File>
+              <FileName>software_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\software_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\scheduler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -408,6 +418,16 @@
               <FileName>main.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\main.h</FilePath>
+            </File>
+            <File>
+              <FileName>software_timer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\software_timer.h</FilePath>
+            </File>
+            <File>
+              <FileName>scheduler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\scheduler.h</FilePath>
             </File>
           </Files>
         </Group>
